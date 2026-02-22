@@ -1,0 +1,56 @@
+@startuml
+title Future 2.0 — Автоматизация развёртывания (Yandex Cloud + Terraform)
+
+skinparam rectangle {
+  BorderColor #2E4053
+  BackgroundColor #F8F9FA
+}
+
+actor "DevOps инженер" as DevOps
+
+rectangle "Локальная машина DevOps" {
+  component "Terraform CLI" as TF
+  component "Git (Infrastructure as Code)" as Git
+}
+
+rectangle "Yandex Cloud" {
+
+  rectangle "Управляется Terraform" {
+
+    component "VPC Network" as VPC
+    component "Public Subnet" as PubSub
+    component "Private Subnet" as PrivSub
+
+    component "NAT Gateway" as NAT
+    component "Security Group" as SG
+
+    component "VM: Bastion Host" as Bastion
+    component "VM: Application Server" as AppVM
+    component "VM: Data Node" as DataVM
+
+    database "Persistent Disk" as Disk
+  }
+
+  rectangle "Создаётся вручную (один раз)" {
+    component "Cloud Account" as Billing
+    component "Service Account\n+ IAM роли" as IAM
+  }
+}
+
+DevOps --> Git : Хранение кода
+DevOps --> TF : terraform init/plan/apply
+
+TF --> VPC
+TF --> PubSub
+TF --> PrivSub
+TF --> NAT
+TF --> SG
+TF --> Bastion
+TF --> AppVM
+TF --> DataVM
+TF --> Disk
+
+Bastion --> AppVM
+AppVM --> DataVM
+
+@enduml

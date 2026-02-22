@@ -1,0 +1,71 @@
+@startuml
+title Future 2.0 — Потоки данных между доменами (целевая модель через год)
+
+skinparam rectangle {
+  BackgroundColor #F8F9FA
+  BorderColor #2E4053
+}
+
+skinparam database {
+  BackgroundColor #FFFFFF
+  BorderColor #1F618D
+}
+
+actor "Оператор клиники" as Operator
+actor "Бизнес-пользователь\n(менеджмент)" as Manager
+actor "Партнёр\n(фармацевтика / электроника)" as Partner
+
+
+rectangle "Домен «Клиника»" {
+  component "Сервисы клиники\n(приёмы, услуги, счета)" as ClinicSvc
+  database "Операционная БД клиники" as ClinicDB
+}
+
+rectangle "Домен «Финтех»" {
+  component "Финансовые сервисы\n(платежи, кредиты, рассрочки)" as FinSvc
+  database "Операционная БД финтеха" as FinDB
+}
+
+rectangle "Домен «ИИ»" {
+  component "Сервисы ИИ\n(анализ снимков,\nподдержка диагностики)" as AISvc
+  database "Изолированное хранилище ИИ" as AIDB
+}
+
+rectangle "Домен интеграции партнёров" {
+  component "API партнёров\n(контракты, протоколы)" as PartnerAPI
+}
+
+rectangle "Платформа событий\n(Event Streaming)" as EventBus
+
+
+rectangle "Платформа данных (Data Mesh)" {
+  database "Доменные витрины данных\n(Data Products)" as DataProducts
+  component "Семантический слой\n(метрики, RBAC, бизнес-правила)" as Semantic
+}
+
+rectangle "Портал самообслуживания\nи BI" as BI
+
+Operator --> ClinicSvc : Ввод медицинских данных,\nоформление услуг
+ClinicSvc --> ClinicDB : Сохранение транзакционных данных
+
+ClinicSvc --> AISvc : Передача мед. данных\nдля анализа
+AISvc --> AIDB : Сохранение результатов\nмоделей
+AISvc --> ClinicSvc : Возврат результата ИИ\nв процесс лечения
+
+ClinicSvc --> EventBus : Публикация бизнес-событий\n(оказана услуга, создан счёт)
+
+FinSvc --> FinDB : Финансовые транзакции
+FinSvc --> EventBus : Публикация фин. событий\n(платёж, кредит оформлен)
+
+Partner --> PartnerAPI : Интеграция новых сервисов
+PartnerAPI --> EventBus : Публикация событий\nпартнёров
+
+EventBus --> DataProducts : Потоковая загрузка\nразрешённых данных\n(без медкарт и снимков)
+
+DataProducts --> Semantic : Формирование\nединых бизнес-метрик
+
+Semantic --> BI : Предоставление моделей\nдля построения отчётов
+
+Manager --> BI : Формирование\nуправленческой отчётности
+
+@enduml
