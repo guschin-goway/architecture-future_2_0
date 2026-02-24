@@ -1,0 +1,5 @@
+/task4/.terraform/
+/task4/.terraform.lock.hcl
+/task4/terraform.tfstate
+/task4/terraform.tfstate.backup
+/task4/.terraform.tfstate.lock.info

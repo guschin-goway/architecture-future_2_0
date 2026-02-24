@@ -1,0 +1,42 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_TOP_DOWN()
+
+title Future 2.0 – Target Container Architecture (1 Year)
+
+Person(operator, "Оператор клиники", "Работает с операционными системами")
+Person(manager, "Бизнес-пользователь", "Формирует управленческую отчётность")
+
+System_Boundary(system, "Future 2.0 Cloud Platform") {
+    Container(api_gateway, "API Gateway", "Cloud API Gateway", "Единая точка входа, аутентификация, RBAC, аудит")
+    Container(clinic_domain, "Clinic Domain Services", "Cloud Microservices", "Операционная логика клиник. Медицинские данные НЕ передаются в аналитическую витрину")
+    Container(fintech_domain, "Fintech Domain Services", "Cloud Microservices", "Финансовые продукты, банковская логика")
+    Container(ai_domain, "AI Domain Services", "ML Platform", "ИИ-анализ медицинских данных (изолированный контур)")
+    Container(event_bus, "Event Streaming Platform", "Kafka / PubSub", "Асинхронная интеграция между доменами")
+    Container(operational_db_clinic, "Clinic Operational DB", "Cloud DB", "Транзакционные данные клиник")
+    Container(operational_db_fintech, "Fintech Operational DB", "Cloud DB", "Транзакционные финансовые данные")
+    Container(data_platform, "Cloud Data Platform (Lakehouse / Data Mesh)", "Cloud DWH + Object Storage", "Доменные data products. Масштабируемая аналитика")
+    Container(semantic_layer, "Semantic Layer", "Metrics Layer", "Единые бизнес-метрики и RBAC")
+    Container(self_service_portal, "Self-Service Data Portal", "Web App", "Конструирование отчётов пользователями")
+    Container(bi_tools, "BI Tools", "Power BI / Cloud BI", "Визуализация и отчётность")
+    Container(security, "Security & Governance", "IAM / Audit / Data Catalog", "Контроль доступа, аудит, соответствие регуляторам")
+}
+
+Rel(operator, api_gateway, "Работает через")
+Rel(api_gateway, clinic_domain, "Маршрутизация запросов")
+Rel(api_gateway, fintech_domain, "Маршрутизация запросов")
+Rel(api_gateway, ai_domain, "Маршрутизация запросов")
+Rel(clinic_domain, operational_db_clinic, "Чтение/запись")
+Rel(fintech_domain, operational_db_fintech, "Чтение/запись")
+Rel(clinic_domain, event_bus, "Публикует события")
+Rel(fintech_domain, event_bus, "Публикует события")
+Rel(event_bus, data_platform, "Потоковая загрузка данных")
+Rel(data_platform, semantic_layer, "Предоставляет data products")
+Rel(semantic_layer, self_service_portal, "Метрики и модели")
+Rel(self_service_portal, bi_tools, "Источник данных")
+Rel(manager, self_service_portal, "Формирует отчёты")
+Rel(data_platform, security, "Data governance")
+Rel(api_gateway, security, "IAM + аудит")
+
+@enduml

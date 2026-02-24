@@ -1,0 +1,66 @@
+@startuml
+title Future 2.0 - Технологический радар
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultTextAlignment center
+skinparam rectangle {
+  BorderColor #2E4053
+  BackgroundColor #FDFEFE
+}
+
+ 
+circle "ADOPT\nАктивно внедрять\n(критично для стратегии)" as R1
+circle "TRIAL\nПилотировать\n(внедрение по результатам)" as R2
+circle "ASSESS\nОценивать\n(анализ целесообразности)" as R3
+circle "HOLD\nПостепенно выводить\n(технологический долг)" as R4
+ 
+rectangle "Облачная инфраструктура (Cloud)\n\nПоддерживает:\n* Масштабирование аналитики\n* Геораспределённость\n* Отказоустойчивость\n\nБизнес-ценность:\n* Снижение CapEx\n* Быстрое подключение новых направлений" as Cloud
+
+rectangle "Платформа потоковых событий (Kafka / PubSub)\n\nПоддерживает:\n* Независимость доменов\n* Интеграцию финтеха, ИИ и партнёров\n\nБизнес-ценность:\n* Быстрый запуск новых сервисов\n* Снижение связности систем" as Kafka
+
+rectangle "Data Mesh (доменные витрины)\n\nПоддерживает:\n* Ответственность доменов за данные\n* Независимое развитие подразделений\n\nБизнес-ценность:\n* Ускорение time-to-market\n* Снижение зависимости от DWH" as Mesh
+
+rectangle "Lakehouse / Cloud DWH\n\nПоддерживает:\n* Быструю отчётность\n* Обработку сотен ТБ данных\n\nБизнес-ценность:\n* Отчёты за минуты вместо часов\n* Поддержка роста объёма данных" as Lake
+
+rectangle "Семантический слой (Semantic Layer)\n\nПоддерживает:\n* Self-service аналитику\n* Единые бизнес-метрики\n\nБизнес-ценность:\n* Быстрое принятие решений\n* Снижение нагрузки на IT" as Semantic
+
+rectangle "IAM + RBAC + Аудит\n\nПоддерживает:\n* Соответствие регуляторам\n* Разграничение доступа\n\nБизнес-ценность:\n* Снижение регуляторных рисков\n* Защита медицинских и фин. данных" as IAM
+
+R1 -[hidden]-> Cloud
+Cloud -[hidden]-> Kafka
+Kafka -[hidden]-> Mesh
+Mesh -[hidden]-> Lake
+Lake -[hidden]-> Semantic
+Semantic -[hidden]-> IAM
+
+ 
+rectangle "Data Quality Framework\n\nПоддерживает:\n* Контроль качества витрин\n* Доверие к аналитике\n\nБизнес-ценность:\n* Снижение управленческих ошибок" as DQ
+
+rectangle "MLOps платформа\n\nПоддерживает:\n* Контроль версий моделей ИИ\n* Мониторинг качества диагностики\n\nБизнес-ценность:\n* Повышение качества медицинских сервисов" as MLOps
+
+rectangle "API Management для партнёров\n\nПоддерживает:\n* Подключение фарм-компаний\n* Интеграцию производителей оборудования\n\nБизнес-ценность:\n* Экосистемный рост\n* Новые источники выручки" as API
+
+R2 -[hidden]-> DQ
+DQ -[hidden]-> MLOps
+MLOps -[hidden]-> API
+
+ 
+rectangle "Serverless-архитектура\n\nПотенциал:\n* Оптимизация затрат\n* Автоматическое масштабирование" as Serverless
+
+rectangle "Data Catalog\n\nПотенциал:\n* Управление метаданными\n* Прозрачность источников данных" as Catalog
+
+R3 -[hidden]-> Serverless
+Serverless -[hidden]-> Catalog
+
+ 
+rectangle "SQL Server 2008 DWH\n\nПроблемы:\n* Монолитная логика\n* Низкая масштабируемость\n* Техдолг" as LegacyDWH
+
+rectangle "PowerBuilder\n\nПроблемы:\n* Устаревший UI\n* Сложность развития" as LegacyUI
+
+rectangle "Apache Camel (ESB)\n\nПроблемы:\n* Централизация интеграций\n* Узкое место масштабирования" as LegacyESB
+
+R4 -[hidden]-> LegacyDWH
+LegacyDWH -[hidden]-> LegacyUI
+LegacyUI -[hidden]-> LegacyESB
+
+@enduml
