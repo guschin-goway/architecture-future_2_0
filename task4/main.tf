@@ -61,14 +61,14 @@ resource "yandex_compute_instance" "bastion" {
   name = "bastion-host"
 
   resources {
-    cores  = 2
-    memory = 2
+    cores  = var.bastion_cores
+    memory = var.bastion_memory
   }
 
   boot_disk {
     initialize_params {
       image_id = var.image_id
-      size     = 20
+      size     = var.bastion_disk_size
     }
   }
 
@@ -83,14 +83,14 @@ resource "yandex_compute_instance" "app" {
   name = "application-server"
 
   resources {
-    cores  = 4
-    memory = 4
+    cores  = var.app_cores
+    memory = var.app_memory
   }
 
   boot_disk {
     initialize_params {
       image_id = var.image_id
-      size     = 40
+      size     = var.app_disk_size
     }
   }
 
@@ -105,14 +105,14 @@ resource "yandex_compute_instance" "data" {
   name = "data-node"
 
   resources {
-    cores  = 4
-    memory = 8
+    cores  = var.data_cores
+    memory = var.data_memory
   }
 
   boot_disk {
     initialize_params {
       image_id = var.image_id
-      size     = 100
+      size     = var.data_disk_size
     }
   }
 
